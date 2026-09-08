@@ -250,64 +250,66 @@
   <a class="back" href="index.html">← 返回封面</a>
 
   <header>
-    <h1>你好，我是 XXX</h1>
-    <p>欢迎来到我的作品展示页</p>
+    <h1>ProductX</h1>
+    <p>更高效 · 更智能 · 更安全 —— 一站式工作解决方案</p>
   </header>
 
   <section id="works" class="panel">
   <main>
     <div class="card" onclick="openDetail(this)">
-      <h2>作品一</h2>
+      <h2>智能核心引擎</h2>
       <p>点击卡片查看详情 ↓</p>
       <div class="detail"><div>
-        <p>这里是作品一的详细介绍，描述你做了什么、用了什么技术、解决了什么问题。</p>
-        <span class="tag">HTML</span><span class="tag">入门作品</span>
+        <p>内置 AI 智能引擎，自动识别工作流程中的重复环节，一键完成自动化处理，效率提升 300%。</p>
+        <span class="tag">AI 驱动</span><span class="tag">自动化</span>
       </div></div>
     </div>
 
     <div class="card" onclick="openDetail(this)">
-      <h2>作品二</h2>
+      <h2>极速响应性能</h2>
       <p>点击卡片查看详情 ↓</p>
       <div class="detail"><div>
-        <p>这里是作品二的详细介绍，同样可以自由修改。</p>
-        <span class="tag">CSS</span><span class="tag">练手项目</span>
+        <p>毫秒级响应速度，即使处理超大规模数据也毫不卡顿，为你节省每一秒等待时间。</p>
+        <span class="tag">高性能</span><span class="tag">低延迟</span>
       </div></div>
     </div>
     <div class="card" onclick="openDetail(this)">
-      <h2>作品三</h2>
+      <h2>全端数据同步</h2>
       <p>点击卡片查看详情 ↓</p>
       <div class="detail"><div>
-        <p>这里是作品三的详细介绍，把内容换成你自己的项目说明。</p>
-        <span class="tag">JavaScript</span><span class="tag">交互设计</span>
-      </div></div>
-    </div>
-
-    <div class="card" onclick="openDetail(this)">
-      <h2>作品四</h2>
-      <p>点击卡片查看详情 ↓</p>
-      <div class="detail"><div>
-        <p>这里是作品四的详细介绍，图片以后可以加在这里。</p>
-        <span class="tag">设计</span><span class="tag">创意</span>
+        <p>电脑、手机、平板无缝衔接，数据实时云端同步，随时随地切换设备继续工作。</p>
+        <span class="tag">云端同步</span><span class="tag">多端支持</span>
       </div></div>
     </div>
 
     <div class="card" onclick="openDetail(this)">
-      <h2>作品五</h2>
+      <h2>银行级安全防护</h2>
       <p>点击卡片查看详情 ↓</p>
       <div class="detail"><div>
-        <p>这里是作品五的详细介绍，继续填充你的作品内容。</p>
-        <span class="tag">综合</span><span class="tag">最新作品</span>
+        <p>端到端加密传输与存储，多重身份验证，为你的每一份数据保驾护航。</p>
+        <span class="tag">加密</span><span class="tag">隐私保护</span>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="openDetail(this)">
+      <h2>简约交互设计</h2>
+      <p>点击卡片查看详情 ↓</p>
+      <div class="detail"><div>
+        <p>零学习成本的操作界面，打开即用；个性化面板可按习惯自由定制。</p>
+        <span class="tag">易上手</span><span class="tag">可定制</span>
       </div></div>
     </div>
   </main>
   </section>
 
-  <!-- 关于我 -->
+  <!-- 应用场景 -->
   <section id="about" class="panel hidden">
     <main>
       <div class="card" style="cursor: default;">
-        <h2>关于我</h2>
-        <p>在这里写一段自我介绍：你是谁、擅长什么、正在学习什么。</p>
+        <h2>应用场景</h2>
+        <p>💼 团队协作 —— 任务分配与进度跟踪，一处管理全组工作</p>
+        <p>📊 数据整理 —— 自动汇总报表，告别手动复制粘贴</p>
+        <p>📅 日常效率 —— 日程提醒、待办管理，重要事项不再遗漏</p>
       </div>
     </main>
   </section>
@@ -316,8 +318,9 @@
   <section id="contact" class="panel hidden">
     <main>
       <div class="card" style="cursor: default;">
-        <h2>联系我</h2>
-        <p>邮箱：your@email.com　|　微信：your-wechat</p>
+        <h2>联系我们</h2>
+        <p>官方网站：www.productx.com　|　邮箱：hello@productx.com</p>
+        <p>客服微信：ProductX-Support　|　工作日 9:00 - 18:00 在线</p>
       </div>
     </main>
   </section>
@@ -325,9 +328,9 @@
   <!-- 底部玻璃导航栏 -->
   <nav id="navbar">
     <div class="pill"></div>
-    <button class="active" onclick="switchTab(this, 'works')">作品</button>
-    <button onclick="switchTab(this, 'about')">关于</button>
-    <button onclick="switchTab(this, 'contact')">联系</button>
+    <button class="active" onclick="switchTab(this, 'works')">产品功能</button>
+    <button onclick="switchTab(this, 'about')">应用场景</button>
+    <button onclick="switchTab(this, 'contact')">联系我们</button>
   </nav>
 
   <!-- 卡片详情视图模板：每次点击卡片就克隆一份，多个浮层可同时存在 -->
