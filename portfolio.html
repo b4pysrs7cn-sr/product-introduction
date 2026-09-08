@@ -1,0 +1,463 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的作品集</title>
+  <style>
+    body {
+      font-family: "Microsoft YaHei", sans-serif;
+      margin: 0;
+      background: #f5f6fa;
+      color: #333;
+      text-align: center;
+      animation: pageIn 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: none; }
+    }
+    header {
+      background: #4a69bd;
+      color: white;
+      padding: 60px 20px;
+    }
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 36px;
+    }
+    main {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .card {
+      cursor: pointer;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.45s ease;
+      will-change: transform, box-shadow;
+    }
+    main:hover .card {
+      opacity: 0.55;
+    }
+    main:hover .card:hover {
+      opacity: 1;
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 10px 24px rgba(74, 105, 189, 0.25);
+    }
+    .card h2 {
+      margin-top: 0;
+    }
+    .detail {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      color: #666;
+    }
+    .detail > div { overflow: hidden; min-height: 0; }
+    .card.open .detail {
+      grid-template-rows: 1fr;
+    }
+    .card.open {
+      box-shadow: 0 0 0 2px #4a69bd, 0 10px 24px rgba(74, 105, 189, 0.25);
+    }
+    .tag {
+      display: inline-block;
+      background: #e8edf9;
+      color: #4a69bd;
+      border-radius: 20px;
+      padding: 2px 12px;
+      font-size: 13px;
+      margin: 4px;
+    }
+    footer {
+      padding: 20px;
+      color: #888;
+      font-size: 14px;
+    }
+    /* 返回封面按钮 */
+    .back {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      color: white;
+      text-decoration: none;
+      background: rgba(255,255,255,0.15);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    .back:hover { background: rgba(255,255,255,0.3); }
+
+    /* ===== 底部玻璃导航栏 ===== */
+    #navbar {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      z-index: 50;
+      display: flex;
+      position: fixed;
+      padding: 6px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(24px) saturate(180%);   /* 毛玻璃核心 */
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #navbar:hover {
+      transform: translateX(-50%) translateY(-4px);
+      box-shadow: 0 14px 44px rgba(74, 105, 189, 0.28),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+    #navbar button {
+      position: relative;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 15px;
+      color: #666;
+      padding: 10px 26px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: color 0.35s ease, background 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 1;
+    }
+    #navbar button:hover {
+      color: #4a69bd;
+      background: rgba(74, 105, 189, 0.08);   /* 柔和的蓝色光晕 */
+      transform: translateY(-2px);
+    }
+    #navbar button:active {
+      transform: translateY(0) scale(0.95);   /* 按下时的回弹反馈 */
+    }
+    #navbar button.active { color: #4a69bd; font-weight: bold; }
+    /* 滑动的白色高亮胶囊 */
+    #navbar .pill {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      height: calc(100% - 12px);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 2px 10px rgba(74, 105, 189, 0.25);
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                  width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 0;
+    }
+    /* 栏目面板：切换时淡出 → 换内容 → 淡入，转场更有高级感 */
+    .panel {
+      animation: pageIn 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .panel.fading {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    .hidden { display: none; }
+    body.has-nav { padding-bottom: 110px; }
+
+    /* ===== 卡片详情视图（像打开一个应用） ===== */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      background: rgba(30, 40, 70, 0.35);
+      backdrop-filter: blur(10px) saturate(140%);
+      -webkit-backdrop-filter: blur(10px) saturate(140%);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                  visibility 0.4s;
+    }
+    .overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    .detail-view {
+      position: relative;
+      max-width: 860px;            /* 放大：占据更大的空间 */
+      width: calc(100% - 48px);
+      max-height: 86vh;
+      overflow-y: auto;            /* 内容超出时，在面板内部滚动 */
+      background: white;
+      border-radius: 24px;
+      padding: 48px 56px;
+      text-align: left;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+      transform: scale(0.85) translateY(24px);
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .detail-view h2 { margin-top: 0; color: #4a69bd; font-size: 30px; }
+    .detail-view p { font-size: 17px; line-height: 1.9; color: #444; }
+    .detail-view .tag { cursor: default; }
+    .overlay.show .detail-view {
+      transform: scale(1) translateY(0);
+    }
+    /* FLIP 动画时暂时关闭过渡，用于瞬间“摆位” */
+    .detail-view.no-anim {
+      transition: none !important;
+    }
+    /* 返回时：遮罩与面板同步淡出，且不再拦截鼠标，可立即交互其他卡片 */
+    .overlay.closing {
+      opacity: 0;
+      pointer-events: none;
+    }
+    /* 左上角返回键：圆形玻璃质感 */
+    .back-btn {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(74, 105, 189, 0.08);
+      color: #4a69bd;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .back-btn:hover {
+      background: rgba(74, 105, 189, 0.18);
+      transform: scale(1.1);
+    }
+    .back-btn:active { transform: scale(0.92); }
+  </style>
+</head>
+<body class="has-nav">
+  <a class="back" href="index.html">← 返回封面</a>
+
+  <header>
+    <h1>你好，我是 XXX</h1>
+    <p>欢迎来到我的作品展示页</p>
+  </header>
+
+  <section id="works" class="panel">
+  <main>
+    <div class="card" onclick="openDetail(this)">
+      <h2>作品一</h2>
+      <p>点击卡片查看详情 ↓</p>
+      <div class="detail"><div>
+        <p>这里是作品一的详细介绍，描述你做了什么、用了什么技术、解决了什么问题。</p>
+        <span class="tag">HTML</span><span class="tag">入门作品</span>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="openDetail(this)">
+      <h2>作品二</h2>
+      <p>点击卡片查看详情 ↓</p>
+      <div class="detail"><div>
+        <p>这里是作品二的详细介绍，同样可以自由修改。</p>
+        <span class="tag">CSS</span><span class="tag">练手项目</span>
+      </div></div>
+    </div>
+    <div class="card" onclick="openDetail(this)">
+      <h2>作品三</h2>
+      <p>点击卡片查看详情 ↓</p>
+      <div class="detail"><div>
+        <p>这里是作品三的详细介绍，把内容换成你自己的项目说明。</p>
+        <span class="tag">JavaScript</span><span class="tag">交互设计</span>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="openDetail(this)">
+      <h2>作品四</h2>
+      <p>点击卡片查看详情 ↓</p>
+      <div class="detail"><div>
+        <p>这里是作品四的详细介绍，图片以后可以加在这里。</p>
+        <span class="tag">设计</span><span class="tag">创意</span>
+      </div></div>
+    </div>
+
+    <div class="card" onclick="openDetail(this)">
+      <h2>作品五</h2>
+      <p>点击卡片查看详情 ↓</p>
+      <div class="detail"><div>
+        <p>这里是作品五的详细介绍，继续填充你的作品内容。</p>
+        <span class="tag">综合</span><span class="tag">最新作品</span>
+      </div></div>
+    </div>
+  </main>
+  </section>
+
+  <!-- 关于我 -->
+  <section id="about" class="panel hidden">
+    <main>
+      <div class="card" style="cursor: default;">
+        <h2>关于我</h2>
+        <p>在这里写一段自我介绍：你是谁、擅长什么、正在学习什么。</p>
+      </div>
+    </main>
+  </section>
+
+  <!-- 联系方式 -->
+  <section id="contact" class="panel hidden">
+    <main>
+      <div class="card" style="cursor: default;">
+        <h2>联系我</h2>
+        <p>邮箱：your@email.com　|　微信：your-wechat</p>
+      </div>
+    </main>
+  </section>
+
+  <!-- 底部玻璃导航栏 -->
+  <nav id="navbar">
+    <div class="pill"></div>
+    <button class="active" onclick="switchTab(this, 'works')">作品</button>
+    <button onclick="switchTab(this, 'about')">关于</button>
+    <button onclick="switchTab(this, 'contact')">联系</button>
+  </nav>
+
+  <!-- 卡片详情视图模板：每次点击卡片就克隆一份，多个浮层可同时存在 -->
+  <div id="overlayTemplate" class="overlay" style="display:none"
+       onclick="if(event.target===this) closeOverlay(this)">
+    <div class="detail-view">
+      <button class="back-btn" onclick="closeOverlay(this.closest('.overlay'))" title="返回">←</button>
+      <div class="detail-content"></div>
+    </div>
+  </div>
+
+  <script>
+    // ===== 独立浮层架构：每次点击卡片克隆一个新浮层 =====
+    // 好处：正在关闭的浮层和正在打开的浮层互不干扰，动画可同时进行
+    const template = document.getElementById('overlayTemplate');
+    const openOverlays = [];   // 记录所有打开中的浮层（新打开的排在最后）
+    let openCount = 0;         // 打开中的浮层数量，>0 时锁定页面滚动
+
+    // FLIP 第一步：计算卡片与面板之间的位移和缩放
+    function getDelta(card, panel) {
+      const c = card.getBoundingClientRect();
+      const p = panel.getBoundingClientRect();
+      const dx = (c.left + c.width / 2) - (p.left + p.width / 2);
+      const dy = (c.top + c.height / 2) - (p.top + p.height / 2);
+      const scale = c.width / p.width;
+      return `translate(${dx}px, ${dy}px) scale(${scale})`;
+    }
+
+    // 打开卡片详情：克隆一个新浮层，从原卡片位置“生长”到屏幕中央
+    function openDetail(card) {
+      // 1. 克隆模板，填充这张卡片的内容
+      const ov = template.cloneNode(true);
+      ov.removeAttribute('id');
+      ov.style.display = 'flex';
+      const title = card.querySelector('h2').textContent;
+      const desc = card.querySelector('.detail p').textContent;
+      const tags = card.querySelector('.detail').innerHTML.match(/<span[\s\S]*?<\/span>/g) || [];
+      ov.querySelector('.detail-content').innerHTML =
+        `<h2>${title}</h2><p>${desc}</p><p>（这里以后可以放图片和更多介绍）</p><div>${tags.join('')}</div>`;
+      document.body.appendChild(ov);
+      openOverlays.push(ov);
+
+      // 2. FLIP：先摆到卡片位置（关动画），下一帧再平滑生长到中央
+      const panel = ov.querySelector('.detail-view');
+      ov.classList.add('show');
+      panel.classList.add('no-anim');
+      panel.style.transform = getDelta(card, panel);
+      panel.offsetHeight;   // 强制刷新，让“摆位”先生效
+      requestAnimationFrame(() => {
+        panel.classList.remove('no-anim');
+        panel.style.transform = '';
+      });
+
+      // 3. 有浮层打开时锁定背后页面滚动
+      openCount++;
+      document.body.style.overflow = 'hidden';
+    }
+
+    // 关闭某个浮层（macOS 风格）：面板飞回原卡片位置，遮罩同步淡出
+    function closeOverlay(ov) {
+      if (!ov || ov.classList.contains('closing')) return;   // 防止重复关闭
+
+      // 根据标题找到来源卡片，让面板飞回“它自己的”原位
+      const title = ov.querySelector('h2').textContent;
+      const card = [...document.querySelectorAll('.card')]
+        .find(c => c.querySelector('h2').textContent === title);
+
+      ov.classList.add('closing');   // 遮罩立即开始淡出
+      if (card) {
+        const panel = ov.querySelector('.detail-view');
+        panel.style.transform = getDelta(card, panel);   // 面板飞回卡片位置
+      }
+
+      setTimeout(() => {
+        ov.remove();               // 动画结束后从页面中彻底移除这个浮层
+        openOverlays.splice(openOverlays.indexOf(ov), 1);
+        if (--openCount <= 0) document.body.style.overflow = '';   // 全部关闭才恢复滚动
+      }, 460);
+    }
+
+    // 按 ESC 键关闭最近打开的浮层
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && openOverlays.length) {
+        closeOverlay(openOverlays[openOverlays.length - 1]);
+      }
+    });
+
+    // 切换栏目：旧面板淡出 → 隐藏 → 显示新面板淡入；胶囊平滑滑动
+    let switching = false;   // 防止快速连点导致动画错乱
+    function switchTab(btn, panelId) {
+      if (switching) return;
+      switching = true;
+
+      // 1. 当前可见的面板先淡出
+      const current = document.querySelector('.panel:not(.hidden)');
+      if (current) current.classList.add('fading');
+
+      // 2. 高亮按钮和胶囊立即响应
+      document.querySelectorAll('#navbar button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const pill = document.querySelector('#navbar .pill');
+      pill.style.width = btn.offsetWidth + 'px';
+      pill.style.transform = `translateX(${btn.offsetLeft - 6}px)`;
+
+      // 3. 等 250ms 淡出结束后，换上新面板并淡入
+      setTimeout(() => {
+        document.querySelectorAll('.panel').forEach(p => {
+          p.classList.add('hidden');
+          p.classList.remove('fading');
+        });
+        const target = document.getElementById(panelId);
+        target.classList.remove('hidden');
+        target.style.animation = 'none';
+        target.offsetHeight;   // 强制刷新，让入场动画能重新播放
+        target.style.animation = '';
+        window.scrollTo({ top: 0, behavior: 'smooth' });   // 平滑回到顶部
+        switching = false;
+      }, 250);
+    }
+
+    // 页面加载时把胶囊对准第一个按钮
+    window.addEventListener('load', () => {
+      const first = document.querySelector('#navbar button.active');
+      const pill = document.querySelector('#navbar .pill');
+      pill.style.width = first.offsetWidth + 'px';
+      pill.style.transform = `translateX(${first.offsetLeft - 6}px)`;
+    });
+  </script>
+
+  <footer>© 2026 我的作品集</footer>
+</body>
+</html>
+

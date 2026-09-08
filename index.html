@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>封面 · 我的作品集</title>
+  <style>
+    body {
+      font-family: "Microsoft YaHei", sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: #f5f6fa;
+      display: flex;
+    }
+    /* ===== 封面卡片 ===== */
+    #cover {
+      flex: 1;
+      margin: 7vh 12vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      color: white;
+      text-align: center;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #4a69bd 0%, #6a89cc 45%, #82ccdd 100%);
+      box-shadow: 0 24px 60px rgba(74, 105, 189, 0.35);
+      cursor: pointer;
+      animation: coverIn 1s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #cover:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 32px 72px rgba(74, 105, 189, 0.45);
+    }
+    @keyframes coverIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.96); }
+      to   { opacity: 1; transform: none; }
+    }
+    #cover h1 {
+      font-size: 40px;
+      margin: 0;
+      letter-spacing: 6px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    #cover p {
+      font-size: 16px;
+      animation: breathe 2.4s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    /* 点击后的离场动画 */
+    #cover.leaving {
+      animation: coverOut 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      pointer-events: none;
+    }
+    @keyframes coverOut {
+      to { opacity: 0; transform: scale(0.92) translateY(-20px); }
+    }
+  </style>
+</head>
+<body>
+  <div id="cover" onclick="enterSite()">
+    <h1>我的作品集</h1>
+    <p>点击任意位置进入</p>
+  </div>
+
+  <script>
+    function enterSite() {
+      const cover = document.getElementById('cover');
+      cover.classList.add('leaving');
+      // 等离场动画播完（0.7 秒）再跳转到子页面
+      setTimeout(() => { location.href = 'portfolio.html'; }, 700);
+    }
+  </script>
+</body>
+</html>
